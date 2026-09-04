@@ -14,3 +14,14 @@ venv/
 
 *.sqbpro
 usuarios.csv
+
+# app android
+*.apk
+*.db-journal
+*.db-shm
+*.db-wal
+.ipynb_checkpoints/
+
+inventario_ti.sql
+
+inventario_censurado_full.png
