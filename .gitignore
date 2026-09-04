@@ -1,0 +1,16 @@
+﻿# Coletor de inventario TI - artefatos que nao vao para o Git
+build/
+dist/
+__pycache__/
+*.pyc
+*.pyo
+*.exe
+*.db
+.env
+.env.*
+*.log
+.venv/
+venv/
+
+*.sqbpro
+usuarios.csv
