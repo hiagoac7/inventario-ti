@@ -1,9 +1,14 @@
-# Build notebook remains available to generate Android APKs but is excluded
-# from language percentages (the runnable application source is main.py).
-app-android/Build_APK_Colab.ipynb linguist-generated=true
+# Keep executable language statistics focused on original source files.
+*.py linguist-language=Python
+*.bat linguist-language=Batchfile
 
-# PyInstaller spec files are executable Python build scripts.
+# The PyInstaller spec is executable Python code.
 coletor.spec linguist-language=Python
 
-# Buildozer .spec uses INI-style configuration, not Python.
-app-android/buildozer.spec linguist-language=INI
+# The Buildozer spec is INI configuration. Include this real data format
+# in GitHub's language statistics (normally excluded by Linguist).
+app-android/buildozer.spec linguist-language=INI linguist-detectable=true
+
+# Colab notebook is an auxiliary APK build artifact, not the application's
+# primary source; leave it available while excluding it from percentages.
+app-android/Build_APK_Colab.ipynb linguist-generated=true
