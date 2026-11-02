@@ -1,5 +1,9 @@
-# Notebook de compilacao Android mantido no repositorio, mas excluido das estatisticas de linguagens.
+# Build notebook remains available to generate Android APKs but is excluded
+# from language percentages (the runnable application source is main.py).
 app-android/Build_APK_Colab.ipynb linguist-generated=true
 
-# PyInstaller .spec is executable Python configuration.
+# PyInstaller spec files are executable Python build scripts.
 coletor.spec linguist-language=Python
+
+# Buildozer .spec uses INI-style configuration, not Python.
+app-android/buildozer.spec linguist-language=INI
