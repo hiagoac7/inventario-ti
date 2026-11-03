@@ -1,35 +1,81 @@
-# Inventário de Ativos de TI — Coletor Windows
+# Inventário de Ativos de TI
 
-Coletor em Python para inventariar computadores Windows, associar os equipamentos a usuários e armazenar os registros localmente em SQLite.
+**Coleta automatizada de computadores Windows com registro local em SQLite.**
 
-O aplicativo Android agora está no repositório independente [Coletor de Dispositivos Android](https://github.com/hiagoac7/coletor-dispositivos-android).
+![Diagrama funcional do Inventário de Ativos de TI](docs/images/visao-geral.svg)
+
+*Diagrama do funcionamento baseado no código; não é uma captura de tela.*
+
+[Instalação](#instalação-no-windows) · [Como usar](#como-usar) · [Tecnologias](#tecnologias) · [Projeto Android](https://github.com/hiagoac7/coletor-dispositivos-android)
+
+## O que o projeto faz
+
+- Associa um usuário ao equipamento por uma lista CSV.
+- Consulta fabricante, modelo, serial, processador, memória física e armazenamento com PowerShell/CIM.
+- Salva os dados no banco local, usando o serial como chave.
+- Permite distribuir a aplicação como executável Windows com PyInstaller.
 
 ## Tecnologias
 
-- Python e Tkinter: interface.
-- Pandas: leitura da lista de usuários.
-- PowerShell / Get-CimInstance: consulta de fabricante, modelo, serial, processador, memória física e armazenamento.
-- SQLite: armazenamento local.
-- PyInstaller e Batch: geração do executável.
+| Componente | Tecnologias |
+| --- | --- |
+| Aplicação e interface | Python, Tkinter/ttk |
+| Lista de usuários | Pandas, CSV |
+| Consulta de hardware | PowerShell, Get-CimInstance |
+| Armazenamento | SQL, SQLite |
+| Distribuição | PyInstaller, Batch |
+
+## Instalação no Windows
+
+Com Git e Python com Tkinter instalados, abra o terminal:
+
+```powershell
+git clone https://github.com/hiagoac7/inventario-ti.git
+cd inventario-ti
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install pandas pyinstaller
+Copy-Item usuarios.exemplo.csv usuarios.csv
+.\.venv\Scripts\python.exe coletor.py
+```
+
+Edite `usuarios.csv` antes do uso real. Use um nome por linha, na primeira coluna; o leitor aceita separador ponto e vírgula. O exemplo contém somente dados fictícios.
+
+## Como usar
+
+1. Abra o coletor no computador Windows que deseja inventariar.
+2. Selecione o usuário responsável.
+3. Clique em **RODAR COLETA AGORA**.
+4. Confira a confirmação. O arquivo `inventario_ti.db` é criado na pasta do aplicativo.
+
+Uma nova coleta com o mesmo serial substitui o registro anterior. A identificação e a qualidade dos dados dependem das informações fornecidas pelo equipamento ao Windows.
+
+## Gerar o executável
+
+Ative o ambiente e execute o script existente:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+.\build.bat
+```
+
+O resultado fica em `dist/coletor.exe`. Distribua a pasta `dist` com `usuarios.csv`. O script limpa as pastas `build` e `dist` antes da compilação; guarde cópias dos arquivos necessários.
 
 ## Estrutura
 
-- `coletor.py`: interface, coleta e gravação.
-- `limpar_banco.py`: manutenção do banco com cópia de segurança.
-- `coletor.spec` e `build.bat`: empacotamento Windows.
-- `usuarios.exemplo.csv`: modelo da lista local.
+| Arquivo | Função |
+| --- | --- |
+| `coletor.py` | Interface, coleta e gravação |
+| `coletor.spec` | Configuração do PyInstaller |
+| `build.bat` | Compilação e cópia dos arquivos de apoio |
+| `limpar_banco.py` | Manutenção do banco, com backup prévio |
+| `usuarios.exemplo.csv` | Modelo fictício da lista de usuários |
 
-## Uso e compilação
+## Cuidados e validação
 
-1. Instale Python com Tkinter, Pandas e PyInstaller no Windows.
-2. Prepare `usuarios.csv` com os usuários autorizados, usando o exemplo como referência.
-3. Execute `python coletor.py` ou use `build.bat` para gerar `dist/coletor.exe`.
-4. Distribua a pasta de saída com a lista local necessária. O banco `inventario_ti.db` é criado durante a coleta.
+Faça backup do banco antes de qualquer manutenção. `limpar_banco.py` converte campos de texto e remove registros com serial vazio ou `N/A`. Não publique o banco nem a lista real de usuários.
 
-O script `limpar_banco.py` altera registros existentes e cria uma cópia de segurança antes da manutenção. Preserve os backups.
+O código e a separação foram revisados; a coleta e a compilação Windows precisam ser verificadas no ambiente de destino. O histórico anterior à separação pode conter dados e configurações antigas do Android.
 
-## Separação dos projetos
+## Outros projetos
 
-A pasta Android foi retirada da versão atual após a publicação do cliente independente. Os arquivos de execução e compilação Windows foram preservados. A revisão não identificou dependências desses arquivos em relação à pasta Android. A compilação Windows não foi executada nesta atualização.
-
-Os commits antigos continuam no histórico Git e podem conter a lista nominal e o endpoint anteriormente publicados. Retirar arquivos da versão atual não apaga o histórico. Revise o acesso ao Apps Script original.
+[Coletor Android](https://github.com/hiagoac7/coletor-dispositivos-android) · [Central de Suporte de TI](https://github.com/hiagoac7/Portal-Suporte) · [Sistema ATS](https://github.com/hiagoac7/rh-ats)
