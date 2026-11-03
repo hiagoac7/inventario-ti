@@ -12,6 +12,3 @@ app-android/buildozer.spec linguist-language=INI linguist-detectable=true
 # Colab notebook is an auxiliary APK build artifact, not the application's
 # primary source; leave it available while excluding it from percentages.
 app-android/Build_APK_Colab.ipynb linguist-generated=true
-
-# New GitHub-driven Colab build is also an auxiliary notebook.
-app-android/Build_APK_GitHub_Colab.ipynb linguist-generated=true
