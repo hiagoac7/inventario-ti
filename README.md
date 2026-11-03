@@ -1,47 +1,35 @@
 # Inventário de Ativos de TI — Coletor Windows
 
-Projeto de inventário de ativos com dois clientes em **Python**: coletor Windows com interface Tkinter e aplicativo Android com Kivy. A integração móvel envia dados para um endpoint Google Apps Script que alimenta uma planilha Google Sheets. O cliente Windows grava inventário local em SQLite.
+Coletor em Python para inventariar computadores Windows, associar os equipamentos a usuários e armazenar os registros localmente em SQLite.
 
-## Linguagens, formatos e ferramentas
+O aplicativo Android agora está no repositório independente [Coletor de Dispositivos Android](https://github.com/hiagoac7/coletor-dispositivos-android).
 
-| Tipo | Tecnologia | Evidência no repositório |
-| --- | --- | --- |
-| Linguagem | **Python** | `coletor.py`, `limpar_banco.py`, `app-android/main.py` |
-| Scripts de compilação | **Batchfile (Windows CMD)** | `build.bat` |
-| Linguagem usada pelo coletor via subprocesso | **PowerShell** | comandos `Get-CimInstance` chamados por `coletor.py`; não há arquivo `.ps1` separado |
-| Linguagem de consulta de dados | **SQL (SQLite)** | instruções SQL embutidas em `coletor.py` e `limpar_banco.py` |
-| Formato de configuração | **INI** | `app-android/buildozer.spec` |
-| Notebook de build | **Jupyter Notebook / Google Colab** | `app-android/Build_APK_Colab.ipynb` |
-| Framework Android | **Kivy** | `app-android/main.py` |
-| Ponte para APIs Android | **PyJNIus** | `app-android/main.py`, `app-android/buildozer.spec` |
-| Toolchain de APK | **Buildozer, Android SDK/NDK** | `app-android/buildozer.spec`, notebook de build |
-| Empacotamento Windows | **PyInstaller** | `coletor.spec`, `build.bat` |
-| Interface Windows / análise de dados | **Tkinter, Pandas** | `coletor.py` |
-| Banco local | **SQLite** | `coletor.py`, `limpar_banco.py` |
-| Integração em nuvem | **Google Apps Script / Google Sheets** | cliente HTTP em `app-android/main.py` (o código do endpoint remoto não está neste repositório) |
+## Tecnologias
 
-> **Sobre a barra “Languages” do GitHub:** ela reflete a contagem de arquivos-fonte feita pelo GitHub Linguist, não todas as tecnologias utilizadas. Frameworks como Kivy e ferramentas como Buildozer e PyInstaller não aparecem como linguagens independentes. As instruções SQL e PowerShell estão incorporadas ao código Python e, portanto, não são contabilizadas separadamente. O notebook do Colab foi marcado como auxiliar (`linguist-generated`) para evitar que o código de compilação obscureça as linguagens do aplicativo. O arquivo `buildozer.spec` foi identificado como formato INI.
+- Python e Tkinter: interface.
+- Pandas: leitura da lista de usuários.
+- PowerShell / Get-CimInstance: consulta de fabricante, modelo, serial, processador, memória física e armazenamento.
+- SQLite: armazenamento local.
+- PyInstaller e Batch: geração do executável.
 
 ## Estrutura
 
-```text
-coletor.py                       # GUI Windows, consultas de hardware via PowerShell e SQLite
-limpar_banco.py                  # manutenção de registros com cópia de segurança
-coletor.spec                     # configuração Python para o PyInstaller
-build.bat                        # compilação do executável Windows
-app-android/
-  main.py                        # interface Kivy e leitura de hardware Android via PyJNIus
-  buildozer.spec                 # configuração INI de compilação APK
-  Build_APK_Colab.ipynb          # notebook auxiliar do Google Colab
-  LEIA-ME.md                     # instruções históricas do aplicativo Android
-```
+- `coletor.py`: interface, coleta e gravação.
+- `limpar_banco.py`: manutenção do banco com cópia de segurança.
+- `coletor.spec` e `build.bat`: empacotamento Windows.
+- `usuarios.exemplo.csv`: modelo da lista local.
 
-## Compilação
+## Uso e compilação
 
-**Windows:** disponibilize os dados locais exigidos pelo aplicativo e execute `build.bat` em um ambiente com Python e PyInstaller. O script gera `dist/coletor.exe`.
+1. Instale Python com Tkinter, Pandas e PyInstaller no Windows.
+2. Prepare `usuarios.csv` com os usuários autorizados, usando o exemplo como referência.
+3. Execute `python coletor.py` ou use `build.bat` para gerar `dist/coletor.exe`.
+4. Distribua a pasta de saída com a lista local necessária. O banco `inventario_ti.db` é criado durante a coleta.
 
-**Android:** o arquivo `app-android/buildozer.spec` define requisitos Python/Kivy/PyJNIus, permissões e parâmetros do Android. O notebook `Build_APK_Colab.ipynb` documenta o build em Google Colab. Não foram executados testes de compilação nesta atualização de documentação.
+O script `limpar_banco.py` altera registros existentes e cria uma cópia de segurança antes da manutenção. Preserve os backups.
 
-## Atenção à segurança
+## Separação dos projetos
 
-O código publicado inclui um endpoint de Apps Script e uma lista nominal de usuários no aplicativo Android. Antes de reutilizá-lo publicamente, revise esses dados e a autorização de acesso ao endpoint. Também é recomendável corrigir a desativação de verificação do certificado TLS na função `enviar_sheets` de `app-android/main.py` antes de uso em produção. Esta alteração de documentação **não** modifica o comportamento do aplicativo.
+A pasta Android foi retirada da versão atual após a publicação do cliente independente. Os arquivos de execução e compilação Windows foram preservados. A revisão não identificou dependências desses arquivos em relação à pasta Android. A compilação Windows não foi executada nesta atualização.
+
+Os commits antigos continuam no histórico Git e podem conter a lista nominal e o endpoint anteriormente publicados. Retirar arquivos da versão atual não apaga o histórico. Revise o acesso ao Apps Script original.
